@@ -90,7 +90,7 @@ export async function POST(request: Request) {
   }
 
   const idempotencyKey =
-    readString(payload.idempotencyKey) || `agent-approvals-${crypto.randomUUID()}`;
+    readString(payload.idempotencyKey) || `approval-agents-${crypto.randomUUID()}`;
 
   const upstreamPayload = {
     ...(intake.clientId ? { clientId: intake.clientId } : {}),
@@ -107,7 +107,7 @@ export async function POST(request: Request) {
       page_url: pageUrl,
       phone_number: phone,
     },
-    source: "Agent Approvals Website Application",
+    source: "Approval Agents Website Application",
     submittedAt: new Date().toISOString(),
   };
 

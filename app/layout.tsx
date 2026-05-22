@@ -9,9 +9,9 @@ const bricolage = Bricolage_Grotesque({
 });
 
 export const metadata: Metadata = {
-  title: "Agent Approvals | Sub-prime Auto Financing",
+  title: "Approval Agents | Sub-prime Auto Financing",
   description:
-    "Apply with Agent Approvals for auto financing options built for challenged credit, new credit, and past credit issues.",
+    "Apply with Approval Agents for auto financing options built for challenged credit, new credit, and past credit issues.",
 };
 
 export default function RootLayout({

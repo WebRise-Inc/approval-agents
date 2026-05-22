@@ -501,8 +501,8 @@ function ApplyForm() {
     try {
       const idempotencyKey =
         typeof crypto !== "undefined" && "randomUUID" in crypto
-          ? `agent-approvals-${crypto.randomUUID()}`
-          : `agent-approvals-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+          ? `approval-agents-${crypto.randomUUID()}`
+          : `approval-agents-${Date.now()}-${Math.random().toString(36).slice(2)}`;
       const response = await fetch("/api/applications", {
         body: JSON.stringify({
           ...nextApplication,
@@ -808,7 +808,7 @@ export default function Home() {
       </a>
 
       <header className="site-header">
-        <a href="#top" aria-label="Agent Approvals home">
+        <a href="#top" aria-label="Approval Agents home">
           <ApprovalLogo decorative />
         </a>
         <nav aria-label="Primary navigation">
@@ -880,7 +880,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="routing-section" aria-label="Agent Approvals routing network">
+      <section className="routing-section" aria-label="Approval Agents routing network">
         <div className="routing-copy">
           <p className="eyebrow">Better options</p>
           <h2>Different situations need different lenders.</h2>
