@@ -3,7 +3,6 @@
 import {
   ArrowLeft,
   ArrowRight,
-  BadgeDollarSign,
   Banknote,
   Car,
   Check,
@@ -17,8 +16,8 @@ import {
   MapPinned,
   MessageSquareText,
   PhoneCall,
+  Search,
   ShieldCheck,
-  Sparkles,
   UserRoundCheck,
   WalletCards,
 } from "lucide-react";
@@ -26,9 +25,13 @@ import type { KeyboardEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 
 type ApplicationState = {
+  vehicleType: string;
+  vehicleCondition: string;
+  purchaseTimeline: string;
   fullName: string;
   phone: string;
   email: string;
+  tradeInStatus: string;
   income: string;
   employment: string;
   creditSituation: string;
@@ -38,7 +41,15 @@ type ApplicationState = {
 };
 
 type ApplicationField = keyof ApplicationState;
-type ChoiceField = "employment" | "creditSituation" | "downPayment" | "budget";
+type ChoiceField =
+  | "vehicleType"
+  | "vehicleCondition"
+  | "purchaseTimeline"
+  | "tradeInStatus"
+  | "employment"
+  | "creditSituation"
+  | "downPayment"
+  | "budget";
 
 type Choice = {
   label: string;
@@ -71,9 +82,13 @@ type ConsentQuestion = {
 type FormQuestion = InputQuestion | ChoiceQuestion | ConsentQuestion;
 
 const defaultApplication: ApplicationState = {
+  vehicleType: "",
+  vehicleCondition: "",
+  purchaseTimeline: "",
   fullName: "",
   phone: "",
   email: "",
+  tradeInStatus: "",
   income: "",
   employment: "",
   creditSituation: "",
@@ -85,94 +100,94 @@ const defaultApplication: ApplicationState = {
 const phoneNumberDisplay = "(613) 909-3884";
 const phoneNumberHref = "tel:+16139093884";
 
-const creditSituations = [
+const buyerSituations = [
   {
-    title: "Bad credit",
-    text: "Missed payments, collections, or a score that has made other places say no.",
+    title: "Buying your first car",
+    text: "Get help understanding your budget, the details you may need, and what happens next.",
   },
   {
-    title: "No credit yet",
-    text: "First car, new to credit, student, newcomer, or not much history yet.",
+    title: "Replacing your vehicle",
+    text: "Explore a practical next car without starting the process on your own.",
   },
   {
-    title: "Consumer proposal",
-    text: "You are rebuilding and need someone to look at where you are now.",
+    title: "Trading in",
+    text: "Bring your current vehicle details and talk through how a trade-in may factor in.",
   },
   {
-    title: "Past bankruptcy",
-    text: "A fresh start can still include a reliable vehicle.",
+    title: "Keeping payments comfortable",
+    text: "Start with a monthly payment that works for your day-to-day life.",
   },
   {
-    title: "Self-employed income",
-    text: "Your income may not fit a standard pay-stub-only application.",
+    title: "Rebuilding credit",
+    text: "Past credit challenges do not stop you from asking what may be possible.",
   },
   {
-    title: "Previous repossession",
-    text: "A tougher situation, but still worth checking before assuming no.",
+    title: "Self-employed",
+    text: "Share how you earn so a reviewer can understand your application.",
   },
 ];
 
 const approvalSignals = [
   {
+    icon: Gauge,
+    title: "Your monthly budget",
+    text: "Tell us what payment range feels comfortable.",
+  },
+  {
     icon: Banknote,
-    title: "What you earn",
-    text: "A rough monthly income number helps us understand what payment may fit.",
+    title: "Your income",
+    text: "A rough monthly amount helps us understand affordability.",
   },
   {
     icon: WalletCards,
-    title: "What you can put down",
-    text: "$0 is okay to choose. A down payment can help, but it is not always required.",
-  },
-  {
-    icon: Gauge,
-    title: "What feels affordable",
-    text: "Start with the monthly payment you can live with.",
+    title: "Your down payment",
+    text: "Choose $0 if that is your plan. Requirements vary by application.",
   },
   {
     icon: CreditCard,
-    title: "What happened with credit",
-    text: "Tell us the situation. No lectures, no awkward explanation.",
+    title: "Your credit picture",
+    text: "Credit is one part of the review, not the whole story.",
   },
 ];
 
 const process = [
   {
     icon: FileText,
-    title: "Answer a few questions",
-    text: "Name, phone, income, credit situation, down payment, and budget.",
+    title: "Tell us what you need",
+    text: "Start with the vehicle and timing, then share the contact and budget details needed for a useful follow-up.",
   },
   {
     icon: UserRoundCheck,
-    title: "We look it over",
-    text: "A real person checks what may work before calling you.",
+    title: "We review your application",
+    text: "A real person looks at the details and considers what options may fit.",
   },
   {
     icon: MapPinned,
-    title: "You get next steps",
-    text: "We explain what is realistic and what may help your approval.",
+    title: "Talk through next steps",
+    text: "We explain the vehicle and financing paths that may be realistic.",
   },
   {
     icon: Car,
-    title: "Pick a vehicle",
-    text: "Once the numbers make sense, you can talk about the car.",
+    title: "Choose when you are ready",
+    text: "If an option works for you, move forward with a car that fits your needs and budget.",
   },
 ];
 
 const vehiclePaths = [
   {
-    icon: BadgeDollarSign,
-    title: "Keep payment low",
-    text: "For people who need the car and want the monthly payment controlled.",
+    icon: Gauge,
+    title: "Comfortable payment",
+    text: "Start with a monthly amount that leaves room for the rest of life.",
   },
   {
-    icon: ShieldCheck,
-    title: "Rebuild while driving",
-    text: "For people trying to move forward and build better payment history.",
+    icon: Car,
+    title: "Right vehicle",
+    text: "Talk through the size, use, and features that matter before you commit.",
   },
   {
     icon: Handshake,
-    title: "Make the approval stronger",
-    text: "Sometimes a down payment, co-signer, or different vehicle makes the difference.",
+    title: "Clear next steps",
+    text: "Understand what may be available before deciding whether to move forward.",
   },
 ];
 
@@ -182,7 +197,7 @@ const documents = [
   "Proof of address",
   "Down payment amount, if any",
   "Trade-in details, if applicable",
-  "A quick note about your credit situation",
+  "Your preferred monthly payment range",
 ];
 
 const deliveryProofs = [
@@ -222,28 +237,67 @@ const deliveryProofs = [
 
 const faqs = [
   {
-    question: "Is this only for bad credit?",
+    question: "Do I need to know exactly which car I want?",
     answer:
-      "No. You can apply with bad credit, no credit, new credit, past bankruptcy, a proposal, or self-employed income.",
+      "No. You can start with a budget and talk through possible vehicle options during the follow-up. Vehicle availability varies.",
   },
   {
-    question: "Am I approved after submitting?",
+    question: "Does submitting mean I am approved?",
     answer:
       "No. The form starts the process. Final approval, payment, rate, and vehicle options depend on lender review and income verification.",
   },
   {
     question: "Do I need money down?",
     answer:
-      "Not always. Some people can start with $0 down. Others have better options with a deposit.",
+      "Not always. Requirements vary by lender, application, and vehicle. We can talk through what may be available.",
   },
   {
-    question: "What happens after I apply?",
+    question: "Is this only for challenged credit?",
     answer:
-      "Someone follows up, confirms the basics, and tells you what options may be realistic.",
+      "No. Approval Agents is for people shopping for a vehicle across a range of credit situations, including established credit, new credit, and past credit challenges.",
+  },
+  {
+    question: "What happens after I submit?",
+    answer:
+      "An Approval Agent follows up, confirms the basics, and talks through what vehicle and financing options may be realistic.",
   },
 ];
 
 const formQuestions: FormQuestion[] = [
+  {
+    id: "vehicleType",
+    kind: "choice",
+    question: "What type of vehicle are you looking for?",
+    options: [
+      { label: "SUV", value: "SUV" },
+      { label: "Sedan", value: "Sedan" },
+      { label: "Truck", value: "Truck" },
+      { label: "Van", value: "Van" },
+      { label: "Electric / hybrid", value: "Electric or hybrid" },
+      { label: "Not sure yet", value: "Not sure yet" },
+    ],
+  },
+  {
+    id: "vehicleCondition",
+    kind: "choice",
+    question: "Are you looking for new or used?",
+    options: [
+      { label: "New", value: "New" },
+      { label: "Used", value: "Used" },
+      { label: "Open to either", value: "Open to either" },
+    ],
+  },
+  {
+    id: "purchaseTimeline",
+    kind: "choice",
+    question: "When would you like your next vehicle?",
+    options: [
+      { label: "As soon as possible", value: "As soon as possible" },
+      { label: "Within 30 days", value: "Within 30 days" },
+      { label: "Within 1-3 months", value: "Within 1 to 3 months" },
+      { label: "Just browsing", value: "Just browsing" },
+    ],
+  },
   {
     id: "fullName",
     kind: "input",
@@ -271,6 +325,39 @@ const formQuestions: FormQuestion[] = [
     inputMode: "email",
   },
   {
+    id: "budget",
+    kind: "choice",
+    question: "Monthly payment?",
+    options: [
+      { label: "Under $350", value: "Under $350 / month" },
+      { label: "$350-$500", value: "$350 - $500 / month" },
+      { label: "$500-$700", value: "$500 - $700 / month" },
+      { label: "$700+", value: "$700+ / month" },
+      { label: "Not sure", value: "Not sure" },
+    ],
+  },
+  {
+    id: "tradeInStatus",
+    kind: "choice",
+    question: "Do you have a vehicle to trade in?",
+    options: [
+      { label: "Yes", value: "Yes" },
+      { label: "No", value: "No" },
+      { label: "Not sure", value: "Not sure" },
+    ],
+  },
+  {
+    id: "downPayment",
+    kind: "choice",
+    question: "Down payment?",
+    options: [
+      { label: "$0", value: "$0" },
+      { label: "$500-$1k", value: "$500 - $1,000" },
+      { label: "$1k-$2.5k", value: "$1,000 - $2,500" },
+      { label: "$2.5k+", value: "$2,500+" },
+    ],
+  },
+  {
     id: "income",
     kind: "input",
     question: "Monthly income?",
@@ -294,32 +381,12 @@ const formQuestions: FormQuestion[] = [
     kind: "choice",
     question: "Credit situation?",
     options: [
+      { label: "Good / established", value: "Established credit" },
+      { label: "Building / new", value: "No credit history" },
       { label: "Rebuilding", value: "Rebuilding credit" },
-      { label: "No credit", value: "No credit history" },
       { label: "Proposal", value: "Consumer proposal" },
-      { label: "Bankruptcy", value: "Past bankruptcy" },
-    ],
-  },
-  {
-    id: "downPayment",
-    kind: "choice",
-    question: "Down payment?",
-    options: [
-      { label: "$0", value: "$0" },
-      { label: "$500-$1k", value: "$500 - $1,000" },
-      { label: "$1k-$2.5k", value: "$1,000 - $2,500" },
-      { label: "$2.5k+", value: "$2,500+" },
-    ],
-  },
-  {
-    id: "budget",
-    kind: "choice",
-    question: "Monthly payment?",
-    options: [
-      { label: "Lowest", value: "Lowest payment possible" },
-      { label: "$300-$450", value: "$300 - $450 / month" },
-      { label: "$450-$650", value: "$450 - $650 / month" },
-      { label: "$650+", value: "$650+ / month" },
+      { label: "Past bankruptcy", value: "Past bankruptcy" },
+      { label: "Not sure", value: "Not sure" },
     ],
   },
   {
@@ -335,22 +402,30 @@ function getFirstName(fullName: string) {
 
 function getQuestionCopy(question: FormQuestion, firstName: string) {
   switch (question.id) {
+    case "vehicleType":
+      return "What kind of vehicle are you looking for?";
+    case "vehicleCondition":
+      return "New, used, or open to either?";
+    case "purchaseTimeline":
+      return "When would you like your next vehicle?";
     case "phone":
       return `Best number to reach you, ${firstName}?`;
     case "email":
-      return "Where should we send matches?";
-    case "income":
-      return "Monthly income before tax?";
-    case "employment":
-      return "What are you up to for work?";
-    case "creditSituation":
-      return "What are we working with?";
-    case "downPayment":
-      return "Putting anything down?";
+      return "Where should we send your next steps?";
     case "budget":
-      return "What payment feels comfortable?";
+      return "What monthly payment feels comfortable?";
+    case "tradeInStatus":
+      return "Do you have a vehicle to trade in?";
+    case "downPayment":
+      return "Planning a down payment?";
+    case "income":
+      return "Approximate monthly income before tax?";
+    case "employment":
+      return "How do you currently earn income?";
+    case "creditSituation":
+      return "How would you describe your credit today?";
     case "consent":
-      return "Can we contact you about your options?";
+      return "Can we contact you about your car search?";
     default:
       return question.question;
   }
@@ -358,22 +433,30 @@ function getQuestionCopy(question: FormQuestion, firstName: string) {
 
 function getBanter(question: FormQuestion, firstName: string) {
   switch (question.id) {
+    case "vehicleType":
+      return "Start with the car.";
+    case "vehicleCondition":
+      return "Either works if you are flexible.";
+    case "purchaseTimeline":
+      return "A rough timeline is enough.";
     case "fullName":
-      return "Quick intro first.";
+      return "Now, a quick introduction.";
     case "phone":
       return `Good to meet you, ${firstName}.`;
     case "email":
       return "We will keep the next step clear.";
+    case "budget":
+      return "Start with what works for you.";
+    case "tradeInStatus":
+      return "A trade-in may help shape the options.";
+    case "downPayment":
+      return "Zero is a real answer.";
     case "income":
       return "A ballpark number is fine.";
     case "employment":
-      return "This helps us understand your situation.";
+      return "This helps us understand the full picture.";
     case "creditSituation":
-      return "No judgment here.";
-    case "downPayment":
-      return "Zero is a real answer.";
-    case "budget":
-      return "Comfort beats stretch.";
+      return "Every starting point is welcome.";
     case "consent":
       return "Last one.";
   }
@@ -404,12 +487,12 @@ function ApprovalMap() {
   return (
     <div className="approval-map">
       <img
-        alt="Approval Agents showing multiple car financing options from one application"
+        alt="Approval Agents connecting a car shopper with potential financing options"
         src="/agent-approvals-routing.png"
       />
       <div className="map-copy">
-        <span>More options</span>
-        <strong>One application can open more than one door.</strong>
+        <span>Connected options</span>
+        <strong>Your application can be considered across more than one path.</strong>
       </div>
     </div>
   );
@@ -422,6 +505,7 @@ function ApplyForm() {
   const [step, setStep] = useState(0);
   const [submitError, setSubmitError] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const sourcePageUrl = useRef("");
 
   const currentQuestion = formQuestions[step];
   const firstName = getFirstName(application.fullName);
@@ -430,6 +514,8 @@ function ApplyForm() {
   const progress = ((step + 1) / formQuestions.length) * 100;
 
   useEffect(() => {
+    sourcePageUrl.current = window.location.href;
+
     if (window.location.search) {
       window.history.replaceState(null, "", `${window.location.pathname}${window.location.hash}`);
     }
@@ -507,7 +593,7 @@ function ApplyForm() {
         body: JSON.stringify({
           ...nextApplication,
           idempotencyKey,
-          pageUrl: window.location.href,
+          pageUrl: sourcePageUrl.current || window.location.href,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -516,13 +602,13 @@ function ApplyForm() {
       });
 
       if (!response.ok) {
-        throw new Error("Application submission failed");
+        throw new Error("Request submission failed");
       }
 
       setSubmitted(true);
     } catch {
       setSubmitError(
-        "We could not send the application. Please try again or call the number below."
+        "We could not send your request. Please try again or call the number below."
       );
     } finally {
       setIsSubmitting(false);
@@ -596,20 +682,20 @@ function ApplyForm() {
         <div className="success-icon">
           <CheckCircle2 size={38} />
         </div>
-        <span>Application received</span>
+        <span>Request received</span>
         <h2>{firstName}, we have your details.</h2>
         <p>
-          The next step is a quick follow-up to confirm details and talk through
-          what vehicle options may fit.
+          An Approval Agent can follow up to confirm the basics and talk through
+          vehicle and financing options that may fit.
         </p>
         <dl className="summary-list">
           <div>
-            <dt>Credit</dt>
-            <dd>{application.creditSituation}</dd>
+            <dt>Vehicle</dt>
+            <dd>{application.vehicleType}</dd>
           </div>
           <div>
-            <dt>Income</dt>
-            <dd>{application.income}</dd>
+            <dt>Timing</dt>
+            <dd>{application.purchaseTimeline}</dd>
           </div>
           <div>
             <dt>Budget</dt>
@@ -625,7 +711,7 @@ function ApplyForm() {
             setSubmitted(false);
           }}
         >
-          Start another application
+          Start another search
           <ArrowRight size={18} />
         </button>
       </div>
@@ -674,7 +760,13 @@ function ApplyForm() {
         ) : null}
 
         {currentQuestion.kind === "choice" ? (
-          <fieldset className="typeform-options">
+          <fieldset
+            className={
+              currentQuestion.options.length > 4
+                ? "typeform-options typeform-options-compact"
+                : "typeform-options"
+            }
+          >
             <legend className="sr-only">{currentQuestion.question}</legend>
             {currentQuestion.options.map((option) => {
               const selected = application[currentQuestion.id] === option.value;
@@ -706,7 +798,7 @@ function ApplyForm() {
             <span>
               {isSubmitting
                 ? "Sending application..."
-                : "Yes, contact me about financing options"}
+                : "Yes, contact me about vehicle and financing options"}
             </span>
             <ArrowRight size={18} />
           </button>
@@ -776,7 +868,7 @@ function DeliveryCarousel() {
   return (
     <section className="delivery-section" id="deliveries">
       <div className="delivery-heading">
-        <h2>Recent deliveries</h2>
+        <h2>Cars our customers drove home in</h2>
         <div className="delivery-controls" aria-label="Delivery gallery controls">
           <button aria-label="Previous deliveries" onClick={() => scrollDeliveries(-1)} type="button">
             <ArrowLeft size={20} />
@@ -789,7 +881,7 @@ function DeliveryCarousel() {
       <div className="delivery-viewport" ref={viewportRef}>
         {deliveryProofs.map((proof, index) => (
           <img
-            alt={`${proof.vehicle} approved and delivered`}
+            alt={`${proof.vehicle} delivered to an Approval Agents customer`}
             key={proof.vehicle}
             loading={index < 3 ? "eager" : "lazy"}
             src={proof.image}
@@ -804,7 +896,7 @@ export default function Home() {
   return (
     <main>
       <a className="skip-link" href="#apply">
-        Skip to application
+        Skip to car search
       </a>
 
       <header className="site-header">
@@ -813,32 +905,34 @@ export default function Home() {
         </a>
         <nav aria-label="Primary navigation">
           <a href="#deliveries">Deliveries</a>
-          <a href="#situations">Credit</a>
-          <a href="#process">Process</a>
+          <a href="#situations">Who we help</a>
+          <a href="#process">How it works</a>
           <a href="#faq">FAQ</a>
         </nav>
         <a className="header-action" href="#apply">
-          <FileText size={17} />
-          Apply
+          <Search size={17} />
+          Get started
         </a>
       </header>
 
       <section className="hero-section" id="top">
         <div className="hero-copy">
-          <p className="eyebrow">Car loans for rebuilding credit</p>
-          <h1>Bad credit should not stop you from getting a car.</h1>
+          <p className="eyebrow">A simpler way to buy your next car</p>
+          <h1>Find a car that fits your life and your budget.</h1>
           <p className="hero-text">
-            Answer a few quick questions and see what may be possible.
+            Tell us what you are looking for and an Approval Agent will help you
+            understand the vehicle and financing options that may fit, without
+            pressure or guesswork.
           </p>
           <div className="hero-actions">
             <a className="primary-button" href="#apply">
-              Check my options
+              Start my car search
               <ArrowRight size={18} />
             </a>
           </div>
           <div className="hero-note">
             <ShieldCheck size={17} />
-            <span>No judgment. No commitment.</span>
+            <span>No pressure. No commitment to buy.</span>
           </div>
         </div>
 
@@ -849,71 +943,43 @@ export default function Home() {
 
       <section className="problem-section">
         <div className="section-kicker">
-          <span>Simple start</span>
-          <h2>You do not need to explain everything over and over.</h2>
+          <span>Car shopping, made simpler</span>
+          <h2>Start with what works for you.</h2>
         </div>
         <div className="proof-grid">
           <article>
-            <MessageSquareText size={24} />
-            <h3>Short questions</h3>
+            <Gauge size={24} />
+            <h3>Your budget first</h3>
             <p>
-              The form asks for the basics only: who you are, what you earn,
-              and what kind of payment feels realistic.
+              Choose a monthly payment range that feels comfortable.
+            </p>
+          </article>
+          <article>
+            <MessageSquareText size={24} />
+            <h3>Real guidance</h3>
+            <p>
+              A real person follows up to talk through possible next steps in
+              plain language.
             </p>
           </article>
           <article>
             <FileCheck2 size={24} />
-            <h3>Real person after</h3>
+            <h3>No-pressure start</h3>
             <p>
-              After you apply, someone can follow up and talk through next
-              steps in plain English.
-            </p>
-          </article>
-          <article>
-            <Sparkles size={24} />
-            <h3>No pressure start</h3>
-            <p>
-              You are checking options first. You are not committing to a
-              vehicle by filling out the form.
+              Submitting the form starts a conversation. It does not commit you
+              to a vehicle.
             </p>
           </article>
         </div>
-      </section>
-
-      <section className="routing-section" aria-label="Approval Agents routing network">
-        <div className="routing-copy">
-          <p className="eyebrow">Better options</p>
-          <h2>Different situations need different lenders.</h2>
-          <p>
-            If one place said no, that does not always mean every place will.
-            The goal is to find a vehicle and payment that make sense for where
-            you are now.
-          </p>
-          <ul className="route-list">
-            <li>
-              <CheckCircle2 size={18} />
-              Tell us what happened with credit.
-            </li>
-            <li>
-              <CheckCircle2 size={18} />
-              Share your budget and down payment.
-            </li>
-            <li>
-              <CheckCircle2 size={18} />
-              Get a realistic next step before picking a car.
-            </li>
-          </ul>
-        </div>
-        <ApprovalMap />
       </section>
 
       <section className="credit-section" id="situations">
         <div className="section-kicker">
-          <span>Credit situations</span>
-          <h2>If this sounds like you, apply anyway.</h2>
+          <span>Who we help</span>
+          <h2>A starting point for all kinds of car buyers.</h2>
         </div>
         <div className="situation-grid">
-          {creditSituations.map((situation) => (
+          {buyerSituations.map((situation) => (
             <article className="situation-card" key={situation.title}>
               <CheckCircle2 size={20} />
               <h3>{situation.title}</h3>
@@ -925,8 +991,8 @@ export default function Home() {
 
       <section className="fit-section">
         <div className="section-kicker">
-          <span>What matters</span>
-          <h2>A few details can change what is possible.</h2>
+          <span>What helps us understand the fit</span>
+          <h2>The right car starts with the right numbers.</h2>
         </div>
         <div className="signal-grid">
           {approvalSignals.map((item) => {
@@ -944,11 +1010,11 @@ export default function Home() {
 
       <section className="vehicle-section">
         <div className="section-kicker">
-          <span>Vehicle fit</span>
-          <h2>Start with the payment, then choose the car.</h2>
+          <span>The right fit</span>
+          <h2>The car matters. So do the numbers.</h2>
           <p>
-            The best car is the one you can actually get approved for and afford
-            every month.
+            The goal is to find a vehicle you feel good about and a payment you
+            can realistically manage.
           </p>
         </div>
         <div className="vehicle-paths">
@@ -968,7 +1034,7 @@ export default function Home() {
       <section className="process-section" id="process">
         <div className="section-kicker">
           <span>How it works</span>
-          <h2>Four steps to see what may work.</h2>
+          <h2>Four simple steps toward your next car.</h2>
         </div>
         <div className="process-grid">
           {process.map((item, index) => {
@@ -985,13 +1051,39 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="routing-section" aria-label="Approval Agents financing network">
+        <div className="routing-copy">
+          <p className="eyebrow">Financing support</p>
+          <h2>One application. More ways to move forward.</h2>
+          <p>
+            Share your details once and we can explore financing paths that may
+            fit your budget and situation.
+          </p>
+          <ul className="route-list">
+            <li>
+              <CheckCircle2 size={18} />
+              Tell us what monthly payment feels comfortable.
+            </li>
+            <li>
+              <CheckCircle2 size={18} />
+              Share a few income and financing details.
+            </li>
+            <li>
+              <CheckCircle2 size={18} />
+              Get realistic next steps before you commit to a car.
+            </li>
+          </ul>
+        </div>
+        <ApprovalMap />
+      </section>
+
       <section className="documents-section">
         <div className="documents-copy">
-          <p className="eyebrow">Before the call</p>
-          <h2>Have these ready if we call you.</h2>
+          <p className="eyebrow">If you move forward</p>
+          <h2>A few details can make the next step faster.</h2>
           <p>
-            You do not need perfect credit. These details just make the follow-up
-            faster.
+            You do not need these to start. Having them ready can help when an
+            agent follows up.
           </p>
         </div>
         <div className="document-list">
@@ -1007,7 +1099,7 @@ export default function Home() {
       <section className="faq-section" id="faq">
         <div className="section-kicker">
           <span>Questions</span>
-          <h2>Clear answers before you apply.</h2>
+          <h2>Clear answers before you get started.</h2>
         </div>
         <div className="faq-grid">
           {faqs.map((faq) => (
@@ -1021,16 +1113,16 @@ export default function Home() {
 
       <section className="closing-section">
         <div>
-          <Sparkles size={24} />
-          <h2>Ready to check your options?</h2>
+          <Search size={24} />
+          <h2>Ready to start your car search?</h2>
           <p>
-            Start with the short form. We can follow up and let you know what
-            may be realistic before you commit to anything.
+            Share a few basics and we will follow up to talk through vehicle and
+            financing options that may fit, before you commit to anything.
           </p>
         </div>
         <div className="closing-actions">
           <a className="primary-button" href="#apply">
-            Start application
+            Start my car search
             <ArrowRight size={18} />
           </a>
           <a className="secondary-button" href={phoneNumberHref}>
@@ -1043,14 +1135,15 @@ export default function Home() {
       <footer>
         <ApprovalLogo />
         <p>
-          Final terms, rates, approvals, and vehicle availability depend on
-          lender review, income verification, vehicle selection, and required
-          consent.
+            Submitting this form starts a conversation and does not guarantee
+            financing or reserve a vehicle. Approval, rates, terms, payments,
+            and vehicle availability depend on lender review, income
+            verification, vehicle selection, and other applicable conditions.
         </p>
         <nav aria-label="Footer navigation">
-          <a href="#apply">Apply</a>
+            <a href="#apply">Get started</a>
           <a href={phoneNumberHref}>Call {phoneNumberDisplay}</a>
-          <a href="#situations">Credit situations</a>
+            <a href="#situations">Who we help</a>
           <a href="#faq">Questions</a>
         </nav>
       </footer>

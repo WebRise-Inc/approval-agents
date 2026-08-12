@@ -15,6 +15,10 @@ type ApplicationPayload = {
   income?: unknown;
   pageUrl?: unknown;
   phone?: unknown;
+  purchaseTimeline?: unknown;
+  tradeInStatus?: unknown;
+  vehicleCondition?: unknown;
+  vehicleType?: unknown;
 };
 
 function readString(value: unknown) {
@@ -61,6 +65,9 @@ export async function POST(request: Request) {
   }
 
   const fullName = readString(payload.fullName);
+  const vehicleType = readString(payload.vehicleType);
+  const vehicleCondition = readString(payload.vehicleCondition);
+  const purchaseTimeline = readString(payload.purchaseTimeline);
   const phone = readString(payload.phone);
   const email = readString(payload.email);
   const income = readString(payload.income);
@@ -68,6 +75,7 @@ export async function POST(request: Request) {
   const creditSituation = readString(payload.creditSituation);
   const downPayment = readString(payload.downPayment);
   const budget = readString(payload.budget);
+  const tradeInStatus = readString(payload.tradeInStatus);
   const pageUrl = readString(payload.pageUrl);
 
   if (
@@ -106,6 +114,10 @@ export async function POST(request: Request) {
       monthly_income: income,
       page_url: pageUrl,
       phone_number: phone,
+      purchase_timeline: purchaseTimeline,
+      trade_in_status: tradeInStatus,
+      vehicle_condition: vehicleCondition,
+      vehicle_type: vehicleType,
     },
     source: "Approval Agents Website Application",
     submittedAt: new Date().toISOString(),

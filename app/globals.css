@@ -468,6 +468,14 @@ h1 {
   padding: 0;
 }
 
+.typeform-options-compact {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.typeform-options-compact .typeform-option {
+  min-width: 0;
+}
+
 .typeform-option {
   align-items: center;
   background: transparent;
@@ -1420,6 +1428,10 @@ footer nav a {
 
   .typeform-option {
     min-height: 54px;
+  }
+
+  .typeform-options-compact {
+    grid-template-columns: 1fr;
   }
 
   .typeform-controls {

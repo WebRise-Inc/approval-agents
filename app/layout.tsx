@@ -9,9 +9,9 @@ const bricolage = Bricolage_Grotesque({
 });
 
 export const metadata: Metadata = {
-  title: "Approval Agents | Sub-prime Auto Financing",
+  title: "Approval Agents | Find Your Next Car",
   description:
-    "Apply with Approval Agents for auto financing options built for challenged credit, new credit, and past credit issues.",
+    "Start your car search with Approval Agents. Share your budget and a few details to explore vehicle and financing options that may fit.",
 };
 
 export default function RootLayout({
