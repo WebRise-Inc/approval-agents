@@ -506,6 +506,7 @@ function ApplyForm() {
   const [submitError, setSubmitError] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const sourcePageUrl = useRef("");
+  const submissionId = useRef("");
 
   const currentQuestion = formQuestions[step];
   const firstName = getFirstName(application.fullName);
@@ -585,14 +586,17 @@ function ApplyForm() {
     setSubmitError("");
 
     try {
-      const idempotencyKey =
-        typeof crypto !== "undefined" && "randomUUID" in crypto
-          ? `approval-agents-${crypto.randomUUID()}`
-          : `approval-agents-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      if (!submissionId.current) {
+        submissionId.current =
+          typeof crypto !== "undefined" && "randomUUID" in crypto
+            ? `approval-agents-${crypto.randomUUID()}`
+            : `approval-agents-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      }
+
       const response = await fetch("/api/applications", {
         body: JSON.stringify({
           ...nextApplication,
-          idempotencyKey,
+          idempotencyKey: submissionId.current,
           pageUrl: sourcePageUrl.current || window.location.href,
         }),
         headers: {
@@ -709,6 +713,7 @@ function ApplyForm() {
             setStep(0);
             setSubmitError("");
             setSubmitted(false);
+            submissionId.current = "";
           }}
         >
           Start another search
@@ -789,19 +794,32 @@ function ApplyForm() {
         ) : null}
 
         {currentQuestion.kind === "consent" ? (
-          <button
-            className="typeform-option consent-option"
-            disabled={isSubmitting}
-            onClick={acceptContact}
-            type="button"
-          >
-            <span>
-              {isSubmitting
-                ? "Sending application..."
-                : "Yes, contact me about vehicle and financing options"}
-            </span>
-            <ArrowRight size={18} />
-          </button>
+          <div className="consent-wrap">
+            <p className="consent-disclosure" id="consent-disclosure">
+              By continuing, you consent to Approval Agents using your details
+              to respond and, where needed, sharing them with participating
+              vehicle or financing providers. We may contact you by phone or
+              email. Read our{" "}
+              <a href="/privacy" rel="noreferrer" target="_blank">
+                Privacy Policy
+              </a>
+              .
+            </p>
+            <button
+              aria-describedby="consent-disclosure"
+              className="typeform-option consent-option"
+              disabled={isSubmitting}
+              onClick={acceptContact}
+              type="button"
+            >
+              <span>
+                {isSubmitting
+                  ? "Sending application..."
+                  : "Yes, contact me about vehicle and financing options"}
+              </span>
+              <ArrowRight size={18} />
+            </button>
+          </div>
         ) : null}
 
         {errors.includes(currentQuestion.id) ? (
@@ -1135,16 +1153,17 @@ export default function Home() {
       <footer>
         <ApprovalLogo />
         <p>
-            Submitting this form starts a conversation and does not guarantee
-            financing or reserve a vehicle. Approval, rates, terms, payments,
-            and vehicle availability depend on lender review, income
-            verification, vehicle selection, and other applicable conditions.
+          Submitting this form starts a conversation and does not guarantee
+          financing or reserve a vehicle. Approval, rates, terms, payments,
+          and vehicle availability depend on lender review, income
+          verification, vehicle selection, and other applicable conditions.
         </p>
         <nav aria-label="Footer navigation">
-            <a href="#apply">Get started</a>
+          <a href="#apply">Get started</a>
           <a href={phoneNumberHref}>Call {phoneNumberDisplay}</a>
-            <a href="#situations">Who we help</a>
+          <a href="#situations">Who we help</a>
           <a href="#faq">Questions</a>
+          <a href="/privacy">Privacy</a>
         </nav>
       </footer>
     </main>
