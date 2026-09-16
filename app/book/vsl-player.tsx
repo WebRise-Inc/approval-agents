@@ -6,32 +6,60 @@ import styles from "./book.module.css";
 
 export default function VslPlayer() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const restartWithSound = useRef(false);
+  const soundChosen = useRef(false);
   const [started, setStarted] = useState(false);
   const [failed, setFailed] = useState(false);
-  const [muted, setMuted] = useState(true);
+  const [muted, setMuted] = useState(false);
   const [volume, setVolume] = useState(1);
   const soundOff = muted || volume === 0;
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    // Set the property as well as the attribute for inline autoplay on Safari.
-    video.muted = true;
-    void video.play().then(() => setStarted(true)).catch(() => {
-      // Keep the play button available when a browser blocks autoplay.
-      if (video.error) setFailed(true);
-    });
+    let cancelled = false;
+
+    async function autoplay(video: HTMLVideoElement) {
+      try {
+        await video.play();
+        if (!cancelled) setStarted(true);
+      } catch (error) {
+        if (cancelled || soundChosen.current) return;
+        // Prefer audio. Only mute if the browser denies audible autoplay.
+        if (error instanceof Error && error.name === "NotAllowedError") {
+          video.muted = true;
+          restartWithSound.current = true;
+          setMuted(true);
+          try {
+            await video.play();
+            if (!cancelled) setStarted(true);
+          } catch {
+            if (!cancelled && video.error) setFailed(true);
+          }
+        } else if (video.error) {
+          setFailed(true);
+        }
+      }
+    }
+
+    void autoplay(video);
+    return () => { cancelled = true; };
   }, []);
 
   async function playVideo() {
     const video = videoRef.current;
     if (!video) return;
+    soundChosen.current = true;
+    if (restartWithSound.current) {
+      restartWithSound.current = false;
+      video.currentTime = 0;
+    }
     video.muted = false;
     if (video.volume === 0) video.volume = 1;
     setMuted(false);
-    setStarted(true);
     try {
       await video.play();
+      setStarted(true);
     } catch {
       // Keep the native controls available if a browser blocks playback.
       if (video.error) setFailed(true);
@@ -41,6 +69,11 @@ export default function VslPlayer() {
   function toggleSound() {
     const video = videoRef.current;
     if (!video) return;
+    soundChosen.current = true;
+    if ((video.muted || video.volume === 0) && restartWithSound.current) {
+      restartWithSound.current = false;
+      video.currentTime = 0;
+    }
     video.muted = !(video.muted || video.volume === 0);
     if (!video.muted && video.volume === 0) video.volume = 1;
     setMuted(video.muted);
@@ -63,10 +96,16 @@ export default function VslPlayer() {
         preload="auto"
         poster="/video/approval-agents-poster.jpg"
         aria-label="Approval Agents introduction, 27 seconds, with on-screen captions"
-        onPlay={() => setStarted(true)}
+        onPlaying={() => setStarted(true)}
         onVolumeChange={(event) => {
-          setMuted(event.currentTarget.muted);
-          setVolume(event.currentTarget.volume);
+          const video = event.currentTarget;
+          if (!video.muted && video.volume > 0 && restartWithSound.current) {
+            soundChosen.current = true;
+            restartWithSound.current = false;
+            video.currentTime = 0;
+          }
+          setMuted(video.muted);
+          setVolume(video.volume);
         }}
         onError={() => setFailed(true)}
       >
