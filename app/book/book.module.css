@@ -1,0 +1,114 @@
+.page {
+  --book-blue: #2e50fe;
+  --book-ink: #171d26;
+  --book-muted: #626775;
+  color: var(--book-ink);
+  background: #fff;
+  min-height: 100vh;
+}
+
+.header {
+  max-width: 1200px;
+  padding: 15px 32px;
+  margin: 0 auto;
+  min-height: 96px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  border-bottom: 1px solid #e9eaf0;
+}
+
+.logo { display: block; flex-shrink: 0; }
+.logo img { display: block; width: 216px; height: auto; }
+.headerLink { display: inline-flex; align-items: center; gap: 9px; font-size: 15px; font-weight: 650; }
+.headerLink:hover, .footer a:hover { color: var(--book-blue); }
+
+.main { min-height: auto; }
+.hero { max-width: 1032px; margin: 0 auto; padding: 48px 32px 56px; text-align: center; }
+.hero h1 { max-width: none; margin: 0 0 20px; font-size: clamp(2.5rem, 5.1vw, 4.25rem); line-height: 1.04; letter-spacing: -0.052em; font-weight: 650; }
+.hero h1 span { color: var(--book-blue); }
+.intro { color: var(--book-muted); font-size: 18px; line-height: 1.55; margin: 0 0 32px; letter-spacing: -0.015em; }
+
+.player { position: relative; aspect-ratio: 16 / 9; width: 100%; overflow: hidden; background: #f1f3f9; border: 1px solid #e4e7f0; border-radius: 10px; }
+.video { display: block; width: 100%; height: 100%; object-fit: contain; }
+.playOverlay { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: center; padding: 0 16px 26px; width: 100%; border: 0; background: transparent; color: #fff; }
+.playOverlay:focus-visible { outline: 3px solid var(--book-blue); outline-offset: -5px; }
+.playButton { position: absolute; bottom: 16%; display: flex; align-items: center; justify-content: center; gap: 12px; border-radius: 8px; background: var(--book-blue); padding: 17px 22px; font-size: 16px; font-weight: 650; box-shadow: 0 2px 8px #171d2614; transition: background 160ms ease; }
+.playOverlay:hover .playButton { background: #203ed7; }
+.playDuration { padding-left: 12px; border-left: 1px solid #ffffff59; font-variant-numeric: tabular-nums; font-size: 14px; color: #e9edff; }
+.videoError { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; background: #f1f3f9; }
+.videoError p { margin: 0 0 12px; }
+.videoError a { text-decoration: underline; color: var(--book-blue); }
+.videoCaption { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; color: var(--book-muted); font-size: 14px; text-align: left; }
+.videoCaption > :first-child { font-weight: 600; color: #333a46; }
+.heroAction { margin-top: 32px; }
+.primaryButton { background: var(--book-blue); color: #fff; display: inline-flex; align-items: center; justify-content: center; gap: 18px; padding: 18px 25px; min-height: 56px; border-radius: 8px; font-size: 17px; font-weight: 650; transition: background 160ms ease; }
+.primaryButton:hover { background: #203ed7; }
+.heroAction p { margin: 12px 0 0; color: var(--book-muted); font-size: 14px; }
+
+.booking { background: #f6f7fb; border-top: 1px solid #e9eaf0; padding: 54px max(32px, calc((100vw - 1120px) / 2)) 60px; scroll-margin-top: 20px; }
+.bookingIntro { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; margin: 0 auto 30px; max-width: 1120px; }
+.booking h2 { font-size: clamp(2rem, 3.2vw, 2.7rem); font-weight: 650; letter-spacing: -0.045em; line-height: 1.1; margin: 0 0 14px; }
+.bookingIntro p { margin: 0; font-size: 17px; line-height: 1.55; color: var(--book-muted); }
+.callDetails { flex-shrink: 0; display: flex; gap: 22px; padding-bottom: 4px; color: #474e5b; font-size: 14px; }
+.callDetails span { display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+.calendarWrap { max-width: 1120px; margin: 0 auto; }
+.calendarFrame { position: relative; }
+.calendar { width: 100%; min-height: 640px; overflow: auto; border: 1px solid #e0e3ed; border-radius: 10px; background: #fff; }
+.calendarHelp { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 5px; margin: 18px 0 0; color: var(--book-muted); font-size: 14px; text-align: center; }
+.calendarHelp a { display: inline-flex; align-items: center; gap: 4px; text-decoration: underline; text-underline-offset: 3px; }
+.calendarHelp a:hover { color: var(--book-blue); }
+.calendarLoading { position: absolute; inset: 1px; z-index: 1; display: flex; align-items: center; justify-content: center; padding: 24px; color: var(--book-muted); font-size: 16px; text-align: center; background: #fff; border-radius: 10px; pointer-events: none; }
+.calendarLoading p { margin: 0 0 12px; }
+.calendarLoading a { pointer-events: auto; color: var(--book-blue); display: inline-flex; align-items: center; gap: 4px; text-decoration: underline; text-underline-offset: 3px; }
+
+.footer { display: block; max-width: 1200px; padding: 28px 32px 30px; margin: 0 auto; background: #fff; color: var(--book-muted); }
+.footerTop { display: flex; align-items: center; justify-content: space-between; gap: 18px; font-size: 14px; }
+.footer nav { display: flex; align-items: center; gap: 24px; }
+.footer p { max-width: none; margin: 15px 0 0; color: var(--book-muted); font-size: 12px; line-height: 1.5; }
+
+@media (min-width: 1600px) {
+  .hero { padding-top: 60px; }
+}
+
+@media (max-width: 800px) {
+  .bookingIntro { align-items: flex-start; flex-direction: column; gap: 20px; }
+  .booking { padding: 40px 24px; }
+  .calendar { min-height: 720px; }
+}
+
+@media (max-width: 540px) {
+  .header { padding: 12px 20px; min-height: 78px; gap: 12px; }
+  .logo img { width: 170px; }
+  .headerLink { font-size: 13px; gap: 5px; min-height: 44px; }
+  .headerLink svg { width: 15px; }
+  .hero { padding: 37px 20px 36px; }
+  .hero h1 { font-size: clamp(2.1rem, 8.6vw, 2.9rem); margin-bottom: 18px; line-height: 1.07; letter-spacing: -0.045em; }
+  .intro { font-size: 16px; line-height: 1.5; margin-bottom: 26px; }
+  .desktopBreak { display: none; }
+  .player { border-radius: 8px; }
+  .playOverlay { padding-bottom: 14px; }
+  .playButton { font-size: 14px; padding: 12px 15px; gap: 9px; }
+  .playButton svg { width: 16px; }
+  .playDuration { font-size: 12px; padding-left: 9px; }
+  .videoCaption { margin-top: 11px; font-size: 12px; align-items: flex-start; gap: 8px; }
+  .videoCaption > :last-child { max-width: 145px; text-align: right; }
+  .heroAction { margin-top: 27px; }
+  .primaryButton { font-size: 16px; gap: 12px; padding: 17px 18px; width: 100%; }
+  .heroAction p { font-size: 13px; }
+  .booking { padding: 35px 16px 32px; }
+  .bookingIntro { padding: 0 4px; margin-bottom: 24px; }
+  .booking h2 { font-size: 31px; }
+  .bookingIntro p { font-size: 16px; }
+  .calendar { min-height: 740px; }
+  .footer { padding: 25px 20px; }
+  .footerTop { align-items: flex-start; flex-direction: column; gap: 12px; }
+  .footer nav { gap: 22px; }
+  .footer nav a { min-height: 30px; display: inline-flex; align-items: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global(html):has(.page) { scroll-behavior: auto; }
+  .page *, .page *::before, .page *::after { scroll-behavior: auto !important; transition: none !important; }
+}
