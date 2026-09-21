@@ -6,6 +6,15 @@ export const metadata: Metadata = {
   title: "Privacy Policy | Approval Agents",
   description:
     "Learn what personal information Approval Agents collects, how it is used and shared, and how to make a privacy request.",
+  alternates: { canonical: "/privacy" },
+  openGraph: {
+    title: "Privacy Policy | Approval Agents",
+    description:
+      "Learn what personal information Approval Agents collects, how it is used and shared, and how to make a privacy request.",
+    url: "/privacy",
+    siteName: "Approval Agents",
+    type: "website",
+  },
 };
 
 const phoneNumberDisplay = "(613) 909-3884";

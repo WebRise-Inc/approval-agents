@@ -5,11 +5,13 @@ import VslPlayer from "./vsl-player";
 import styles from "./book.module.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://approvalagents.ca"),
   title: "Book a Free Consultation | Approval Agents",
   description:
     "Meet Approval Agents in 27 seconds, then book a free 15-minute consultation to talk about your next car, your budget, and your financing options.",
+  alternates: { canonical: "/book" },
   openGraph: {
+    url: "/book",
+    siteName: "Approval Agents",
     title: "Your next car starts with a conversation. | Approval Agents",
     description:
       "Watch the short video and book your free 15-minute consultation.",

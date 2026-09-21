@@ -10,6 +10,7 @@ const bricolage = Bricolage_Grotesque({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://approvalagents.ca"),
   title: "Approval Agents | Find Your Next Car",
   description:
     "Start your car search with Approval Agents. Share your budget and a few details to explore vehicle and financing options that may fit.",
