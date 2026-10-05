@@ -38,4 +38,21 @@ The 16.3.8 release also lists newer security fixes. The selected maintained rele
 - Both `npm audit --package-lock-only` and `npm audit --omit=dev` exited 0 with zero known vulnerabilities.
 - Application/public/config source is byte-for-byte unchanged from reporting commit `07dcef2`. No customer form or calendar booking was submitted. Environment secrets and live lead intake were not used.
 
-Browser comparison of the local production build is coordinated separately before release. Production still needs a normal reviewed release and post-deployment check; successful local validation does not deploy these dependency updates.
+Production still needs a normal reviewed release and post-deployment check; successful local validation does not deploy these dependency updates.
+
+
+## Coordinated browser review, October 5
+
+The portfolio reviewer exercised the upgraded local production preview on desktop and at a 390 × 844 mobile viewport. Desktop SUV selection advanced to the second form step and Back preserved the choice; mobile Sedan selection also advanced correctly. The booking video was observed playing (`currentTime` 24.98, `readyState` 4), and its Mute control switched to “Turn sound on” with the muted state enabled. The embedded calendar rendered October availability, the direct Cal.com fallback URL was correct, the booking anchor scrolled to its section, and the privacy page's back link returned home. Home and booking widths fit the mobile viewport without horizontal overflow. No personal inputs, application submission or calendar booking occurred.
+
+Public UI captures below were inspected before adding them. Screenshots have different viewport dimensions and are contextual evidence, not a pixel-identical comparison:
+
+- [Production home baseline, 1365 × 900](media/2026-10-05/production-home-desktop.jpg)
+- [Upgraded local home, 1280 × 720](media/2026-10-05/preview-home-desktop.jpg)
+- [Production booking desktop baseline, 1365 × 900](media/2026-10-05/production-book-desktop.jpg)
+- [Upgraded local home, 390 × 844](media/2026-10-05/preview-home-mobile.jpg)
+- [Upgraded local booking, 390 × 844](media/2026-10-05/preview-book-mobile.jpg)
+
+[Local-preview browser walkthrough](media/2026-10-05/preview-walkthrough.mp4): 20.2 seconds, silent H.264. Recorded browser frames appear in captured order with idle pauses shortened; sampled frames were reviewed and the file decoded without errors.
+
+The local preview contains the dependency update; the production baseline does not establish that update as released. Calendar display is read-only evidence, not a completed booking or backend lead-delivery test.
