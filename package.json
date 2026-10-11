@@ -8,7 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@webriseottawa/analytics": "1.0.0",
+    "@webriseottawa/analytics": "2.0.0",
     "lucide-react": "latest",
     "next": "latest",
     "react": "latest",
