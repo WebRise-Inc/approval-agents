@@ -1,0 +1,17 @@
+{
+  "original_bytes": 1231954,
+  "optimized_bytes": 867716,
+  "original_dimensions": [
+    1672,
+    941
+  ],
+  "optimized_dimensions": [
+    1672,
+    941
+  ],
+  "decoded_rgba_equal": true,
+  "original_matches_production_bytes": true,
+  "bytes_saved": 364238,
+  "reduction_percent": 29.57,
+  "conversion": "cwebp -lossless -z 9 -metadata all"
+}
