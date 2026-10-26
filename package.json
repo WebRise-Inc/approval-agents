@@ -10,7 +10,7 @@
   "dependencies": {
     "@webriseottawa/analytics": "2.1.0",
     "lucide-react": "latest",
-    "next": "16.3.8",
+    "next": "16.4.3",
     "react": "latest",
     "react-dom": "latest"
   },
