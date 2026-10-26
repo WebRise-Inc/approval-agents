@@ -25,3 +25,7 @@ Public preview proof: [desktop](media/2026-10-26/after-desktop.png), [mobile](me
 ## Release status
 
 This is an update to the existing open review PR. No merge or production deployment has been performed. The earlier current-production checks still describe live behavior before release, including the original PNG. Review the complete PR and its final checks, then verify production after an authorized release. The September draft, prior October records and the owner's separate modified video are preserved.
+
+## Direct calendar follow-up, 15:23 UTC
+
+A subsequent read-only check of the direct Cal.com fallback rendered the Free Consultation calendar and available times for October 26 in America/Toronto. No time was selected and no booking was submitted. This verifies the direct fallback's availability view after the earlier walkthrough; the embedded calendar's loading limitation and unverified booking completion remain distinct.
