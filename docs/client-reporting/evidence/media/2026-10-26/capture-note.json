@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-26",
+  "environment": "local production preview at 127.0.0.1:3466",
+  "source": "Actual CDP Page.screencastFrame events during UI interactions",
+  "frames": 22,
+  "idle_pauses_capped_seconds": 2,
+  "audio": false,
+  "scope": [
+    "Homepage",
+    "Vehicle type test selection, step2, Back retains selection",
+    "Book consultation",
+    "Video playback observed then mute state true",
+    "Calendar iframe presence and fallback link, appointment slots not verified",
+    "Privacy route"
+  ],
+  "not_submitted": [
+    "Lead form",
+    "Calendar booking"
+  ]
+}

@@ -488,7 +488,11 @@ function ApprovalMap() {
     <div className="approval-map">
       <img
         alt="Approval Agents connecting a car shopper with potential financing options"
-        src="/agent-approvals-routing.png"
+        src="/agent-approvals-routing.webp"
+        width={1672}
+        height={941}
+        loading="lazy"
+        decoding="async"
       />
       <div className="map-copy">
         <span>Connected options</span>
